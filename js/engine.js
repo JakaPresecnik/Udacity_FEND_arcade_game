@@ -103,6 +103,9 @@ var Engine = (function(global) {
         gems.forEach(function(gem) {
             gem.update();
         });
+        items.forEach(function(item) {
+            item.update();
+        });
 
     }
 
@@ -150,10 +153,22 @@ var Engine = (function(global) {
                 };
                 break;
               case 7:
+                canvas.width = 606;
+                numCols = 6;
                 rowImages[0] = 'images/cliff.png';
                 for (var i = 1; i < rowImages.length; i++) {
                   rowImages[i] = 'images/sand-block.png';
                 };
+                break;
+              case 8:
+              case 9:
+              canvas.width = 404;
+              numCols = 4;
+              rowImages[0] = 'images/cliff-dark.png'
+              for (var i = 1; i < rowImages.length; i++) {
+                rowImages[i] = 'images/sand-block-dark.png';
+              };
+
 
             }
 
@@ -195,9 +210,14 @@ var Engine = (function(global) {
            obstacle.render()
          });
 
+        items.forEach(function(item) {
+             item.render();
+        });
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
+
+
 
         player.render();
 
@@ -220,10 +240,13 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/sand-block.png',
+        'images/sand-block-dark.png',
         'images/cliff.png',
+        'images/cliff-dark.png',
         'images/enemy-bug.png',
         'images/char-boy.png',
         'images/Rock.png',
+        'images/Rock-dark.png',
         'images/shark-fin.png',
         'images/enemy-crab.png',
         'images/palm-tree.png',
@@ -234,6 +257,13 @@ var Engine = (function(global) {
         'images/GemGreen.png',
         'images/GemOrange.png',
         'images/Heart.png',
+        'images/treasure-chest.png',
+        'images/cliff-hole.png',
+        'images/cliff-hole-bars.png',
+        'images/gate-key.png',
+        'images/way-out.png',
+        'images/enemy-bat.png',
+        'images/chest-key.png'
     ]);
     Resources.onReady(init);
 
