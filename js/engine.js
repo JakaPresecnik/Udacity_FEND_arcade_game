@@ -95,7 +95,15 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
+        obstacles.forEach(function(obstacle) {
+            obstacle.update();
+        });
         player.update();
+
+        gems.forEach(function(gem) {
+            gem.update();
+        });
+
     }
 
     /* This function initially draws the "game level", it will then call
