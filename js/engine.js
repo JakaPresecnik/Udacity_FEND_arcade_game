@@ -107,6 +107,7 @@ var Engine = (function(global) {
             item.update();
         });
 
+
     }
 
     /* This function initially draws the "game level", it will then call
@@ -193,6 +194,7 @@ var Engine = (function(global) {
         }
 
         renderEntities();
+
     }
 
     /* This function is called by the render function and is called on each game
@@ -206,20 +208,21 @@ var Engine = (function(global) {
          gems.forEach(function(gem){
            gem.render()
          });
+         items.forEach(function(item) {
+              item.render();
+         });
         obstacles.forEach(function(obstacle){
            obstacle.render()
          });
 
-        items.forEach(function(item) {
-             item.render();
-        });
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
-
-
-
         player.render();
+        
+        health.render(player.health);
+        chestKey.render(player.chestKey);
+        gateKey.render(player.gateKey);
 
     }
 
@@ -263,7 +266,11 @@ var Engine = (function(global) {
         'images/gate-key.png',
         'images/way-out.png',
         'images/enemy-bat.png',
-        'images/chest-key.png'
+        'images/chest-key.png',
+        'images/message-key.png',
+        'dash-img/dash-chest-key.png',
+        'dash-img/dash-gate-key.png',
+        'dash-img/dash-health.png'
     ]);
     Resources.onReady(init);
 
