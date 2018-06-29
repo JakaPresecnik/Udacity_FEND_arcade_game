@@ -59,7 +59,7 @@ var Player = function (x, y) {
   this.x = x;
   this.y = y;
   this.sprite = 'images/char-boy.png';
-  this.level = 1;
+  this.level = 6;
   this.health = 1;
   this.points = 0;
   this.direction = 'up';
@@ -90,15 +90,19 @@ Player.prototype.update = function () {
     });
     this.direction = 'up';
     this.onLevelUp();
-  } else if(this.level === 8 || this.level === 9){
-    if(this.x === 101 && this.y >= 380) {
-        this.direction = 'down';
-        this.level -= 1;
-        this.x = 202;
-        this.y = 55;
-        this.onLevelUp();
+  } else if (this.level === 7) {
+    if(obstacles [8] != undefined) {
+      this.keyCheck();
     }
-  }
+  } else if (this.level === 8 || this.level === 9){
+        if(this.x === 101 && this.y >= 380) {
+          this.direction = 'down';
+          this.level -= 1;
+          this.x = 202;
+          this.y = 55;
+          this.onLevelUp();
+        }
+      }
 };
 Player.prototype.onLevelUp = function() {
   switch (this.level) {
@@ -142,18 +146,18 @@ Player.prototype.onLevelUp = function() {
     // BEACH
     case 7:
       gems = [new Gems(101, 170, 0), new Gems(0, 252, 1), new Gems(505, 248, 2)];
-      items = [new Item(508, 165, 0), new Item(202, 0, 1)];
+      items = [new Item(404, 0, 1), new Item(202, 0, 1), new Item(508, 165, 0)];
       allEnemies.push(new Enemy(140, 240), new Enemy(220, 300) );
       obstacles = [
-        new Obstacle(0, 55, 3),
-        new Obstacle(101, 55, 0),
-        new Obstacle(303, 55, 3),
-        new Obstacle(505, 55, 3),
-        new Obstacle(303, 140, 0),
-        new Obstacle(0, 140, 3),
-        new Obstacle(505, 300, 0),
-        new Obstacle(505, 380, 3),
-        new Obstacle(404, 0, 5)]
+        new Obstacle(0, 55, 3), //PALM TREE
+        new Obstacle(101, 55, 0), //ROCK
+        new Obstacle(303, 55, 3), //PALM TREE
+        new Obstacle(505, 55, 3), //PALM TREE
+        new Obstacle(303, 140, 0), //ROCK
+        new Obstacle(0, 140, 3), //PALM TREE
+        new Obstacle(505, 300, 0), //ROCK
+        new Obstacle(505, 380, 3), //PALM TREE
+        new Obstacle(404, 0, 5)]  //CLOSED GATES
       allEnemies.forEach(function(enemy) {
       enemy.sprite = 'images/enemy-crab.png';
       });
@@ -198,6 +202,25 @@ Player.prototype.onLevelUp = function() {
       break;
   }
 };
+Player.prototype.keyCheck = function() {
+  if(this.x === 404 && this.y <= 55) {
+    if(this.gateKey != 0) {
+      obstacles.pop();
+    }else{
+      items.push(new Item(200, 300, 5));
+    }
+  }else if(this.x === 505 && this.y <= 140) {
+    if(this.chestKey != 0) {
+      this.points += 5000;
+      this.chestKey = 0;
+      items.pop();
+    }else if (items.length > 2){
+      items.push(new Item(200, 300, 5));
+    }
+  }else if(items.length > 3){
+      items.pop();
+  }
+}
 
 var Obstacle = function(x, y, i) {
   this.x = x;
@@ -315,7 +338,8 @@ var itemImages = [
   'images/cliff-hole.png',
   'images/way-out.png',
   'images/gate-key.png',
-  'images/chest-key.png'
+  'images/chest-key.png',
+  'images/message-key.png'
 ];
 
 // This listens for key presses and sends the keys to your
