@@ -16,5 +16,19 @@ DashInfo.prototype.render = function (numberOf) {
 };
 
 var health = new DashInfo(10, 2);
-var chestKey = new DashInfo(350, 0);
-var gateKey = new DashInfo(320, 1);
+var chestKey = new DashInfo(370, 0);
+var gateKey = new DashInfo(350, 1);
+
+var pointInfo = {
+  x: 202,
+  y: 545,
+}
+
+var retryButton = function() {
+  if(player.health === 0) {
+    ctx.textAlign = "center";
+    ctx.font = '30px Arial';
+    ctx.strokeStyle = '#444';
+    ctx.strokeText('RETRY?',canvas.width, 300);
+  }
+}

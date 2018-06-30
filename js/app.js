@@ -38,19 +38,21 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 Enemy.prototype.checkCollisions = function() {
-/*  if(this.x > player.x - 65 && this.x < player.x + 65) {
+  if(this.x > player.x - 65 && this.x < player.x + 65) {
     if(this.y > player.y - 50 && this.y < player.y + 50){
       if(player.direction === 'up'){
+        player.health -= 1;
+        player.checkHealth();
         player.y = 383;
         player.x = 202;
-        player.health -= 1;
       }else {
+        player.health -= 1;
+        player.checkHealth();
         player.x = 202;
         player.y = 55;
-        player.health -= 1;
       }
     }
-  }*/
+  }
 }
 // Now write your own player class
 // This class requires an update(), render() and
@@ -60,7 +62,7 @@ var Player = function (x, y) {
   this.y = y;
   this.sprite = 'images/char-boy.png';
   this.level = 1;
-  this.health = 1;
+  this.health = 2;
   this.points = 0;
   this.direction = 'up';
   this.chestKey = 0;
@@ -93,6 +95,12 @@ Player.prototype.update = function () {
   } else if (this.level === 7) {
     if(obstacles [8] != undefined) {
       this.keyCheck();
+    }else {
+      this.points += 20000;
+      this.level += 3;
+      this.y = 383;
+      this.x = 202;
+      this.onLevelUp();
     }
   } else if (this.level === 8 || this.level === 9){
         if(this.x === 101 && this.y >= 380) {
@@ -102,7 +110,7 @@ Player.prototype.update = function () {
           this.y = 55;
           this.onLevelUp();
         }
-      }
+    }
 };
 Player.prototype.onLevelUp = function() {
   switch (this.level) {
@@ -200,6 +208,12 @@ Player.prototype.onLevelUp = function() {
       new Obstacle(303, 380, 6)
     ];
       break;
+      case 10:
+      allEnemies = [];
+      gems = [];
+      messages = [new Message(0, 20, 6)];
+      obstacles = [new Obstacle(220, 320, 9), new Obstacle(120, 300, 7), new Obstacle(303, 320, 8), new Obstacle(0, 300, 7), new Obstacle(0, 400, 9), new Obstacle(101, 400, 8), new Obstacle(303, 383, 8)]
+        break;
   }
 };
 Player.prototype.keyCheck = function() {
@@ -219,6 +233,15 @@ Player.prototype.keyCheck = function() {
     }
   }else if(items.length > 3){
       items.pop();
+  }
+}
+Player.prototype.checkHealth = function() {
+  if(this.health === 0) {
+    Object.freeze(this);
+    allEnemies.forEach(function(enemy){
+      Object.freeze(enemy);
+    });
+    messages = [new Message(0, 20, 7)];
   }
 }
 
@@ -305,6 +328,14 @@ Item.prototype.update = function() {
     }
   }
 }
+var Message = function(x, y, i) {
+  this.x = x;
+  this.y = y;
+  this.sprite = itemImages[i];
+}
+Message.prototype.render = function() {
+  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
@@ -330,7 +361,10 @@ var obstacleImages = [
   'images/palm-tree.png',
   'images/sea-rock.png',
   'images/cliff-hole-bars.png',
-  'images/Rock-dark.png'
+  'images/Rock-dark.png',
+  'images/treasure-two.png',
+  'images/treasure-one.png',
+  'images/treasure-three.png'
 ]
 var items = [];
 var itemImages = [
@@ -339,8 +373,11 @@ var itemImages = [
   'images/way-out.png',
   'images/gate-key.png',
   'images/chest-key.png',
-  'images/message-key.png'
+  'images/message-key.png',
+  'images/winning-message.png',
+  'images/game-over-message.png'
 ];
+var messages = [];
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.

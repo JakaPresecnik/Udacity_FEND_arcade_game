@@ -106,8 +106,6 @@ var Engine = (function(global) {
         items.forEach(function(item) {
             item.update();
         });
-
-
     }
 
     /* This function initially draws the "game level", it will then call
@@ -169,7 +167,13 @@ var Engine = (function(global) {
               for (var i = 1; i < rowImages.length; i++) {
                 rowImages[i] = 'images/sand-block-dark.png';
               };
-
+              case 10:
+              canvas.width = 404;
+              numCols = 4;
+              rowImages[0] = 'images/cliff-dark.png'
+              for (var i = 1; i < rowImages.length; i++) {
+                rowImages[i] = 'images/sand-block-dark.png';
+              };
 
             }
 
@@ -219,10 +223,22 @@ var Engine = (function(global) {
             enemy.render();
         });
         player.render();
-        
+        messages.forEach(function(message) {
+            message.render();
+        });
+
         health.render(player.health);
         chestKey.render(player.chestKey);
         gateKey.render(player.gateKey);
+
+        ctx.textAlign = "right";
+        ctx.font = '30px Arial';
+        ctx.strokeStyle = '#444';
+        ctx.strokeText('POINTS: ' + player.points, canvas.width, 25);
+        ctx.fillText('POINTS: ' + player.points, canvas.width, 25);
+        ctx.textAlign = "left";
+        ctx.fillText('LEVEL: ' + player.level, 0, 25);
+        ctx.strokeText('LEVEL: ' + player.level, 0, 25);
 
     }
 
@@ -232,6 +248,7 @@ var Engine = (function(global) {
      */
     function reset() {
         // noop
+
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -270,7 +287,12 @@ var Engine = (function(global) {
         'images/message-key.png',
         'dash-img/dash-chest-key.png',
         'dash-img/dash-gate-key.png',
-        'dash-img/dash-health.png'
+        'dash-img/dash-health.png',
+        'images/treasure-two.png',
+        'images/treasure-one.png',
+        'images/treasure-three.png',
+        'images/winning-message.png',
+        'images/game-over-message.png'
     ]);
     Resources.onReady(init);
 
