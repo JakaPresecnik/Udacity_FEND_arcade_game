@@ -1,20 +1,27 @@
-// Enemies our player must avoid
+/*
+* @description: Represent enemy objects.
+* @constructor
+* @param: {number} x - place the enemy object on a random position on x-axis.
+* @param: {number} y - place the enemy position on y axis. Must be entered on object call.
+* @param: {number} speed - defines the enemy speed. MUst be entered on object call.
+* @param: {string} sprite - contains an URL for an enemy image.
+* @method: update - takes 'dt' as an arguement and it multiplies it with the speed property.
+*                 - checks the level of a player and updates enemies going right and left after level 7,
+*                   according to canvas width.
+*                 - calls a 'checkCollision' method.
+* @method: render - it is responsible for drawing the image on canvas.
+* @method: checkCollision - checks if the player is on the same position as the enemy object
+*                           and takes away players checkHealth,
+*                         - calls player's checkHealth method,
+*                         - and resets player on the starting position, depending on where player is moving.
+*/
 var Enemy = function(y, speed) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
     this.x = Math.floor(Math.random() * 699);
     this.y = y;
     this.speed = speed;
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
 };
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
     this.x += this.speed * dt;
     if(player.level === 7) {
       if (this.x > 575) {
@@ -33,7 +40,6 @@ Enemy.prototype.update = function(dt) {
     }
     this.checkCollisions();
 };
-// Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
@@ -54,9 +60,48 @@ Enemy.prototype.checkCollisions = function() {
     }
   }
 }
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+
+/*
+* @description - Represents player object
+* @constructor
+* @param {number} x - player's position on x-axis.
+* @param {number} y - player's position on y axis.
+* @param {string} sprite - URL of player's image.
+* @param {number} level - number of player's level that changes when reached the upper blocks.
+* @param {number} health - number of lives the player has, that changes when player collect hearths.
+* @param {number} points - number of points player has, changes on level-up and collecting gems.
+* @param {string} direction - direction the player is going that changes on higher level.
+* @param {number} chestKey - contains information if the player has a chest key.
+* @param {number} gateKey - contains information if the player has a gate key.
+* @method: render - it is responsible for drawing the image on canvas.
+* @method: handleInput - @param {string} key - is passed from addEventListener
+*                      - method checks what key is pressed and moves the player according to key pressed.
+*                      - it also checks where player is on canvas so it doesn't move off screen.
+* @method: update - checks if player has reached the final line
+*                   (0 up to level 7, both x and y positions on level 8 and 9)
+*                 - adds points to player
+*                 - adds a level (subtracts)
+*                 - places a player on starting y position for next (previous) level.
+*                 - randomize enemy object so it appears the enviroment has changed fully.
+*                 - resets the direction
+*                 - calls onLevelUp method
+*                 - it also checks if player is at the gates on level 7, calling keyCheck method
+* @method: onLevelUp - a switch statement that is responsible to make every level unique.
+*                    - this method adds enemies, obstacles, gems, other items, increases speed of enemies.
+*                    - it also changes the enemies according to player level.
+*                    - from level 8 on it checks if player doesn't have a certain key and adds it to canvas, as well as locking the gates.
+*                    - on level 10 displays a winning message.
+* @method: keyCheck - the first if statement checks if the player is where the gates are,
+*                     and removes the bars if key is not 0, adds a message if it is.
+*                   - if else checks if the player is where the treasure is
+*                     and adds points, remove chest key and treasure if it is not 0
+*                     and dissplays a message with an else if statement is it is. (reason is that else the message appears even if there is no treasure there)
+*                     it also make it availible for a player to farm points if he is good at this game.
+*                   - and finally if the player moves out of the keyCheck area it removes the message if it showed up.
+* @method: checkHealth - is responsible for displaying 'game over' message if player ends up with 0 health
+*                      - it also freezes the screen
+*                      - and alighn the message according to player level.
+*/
 var Player = function (x, y) {
   this.x = x;
   this.y = y;
@@ -209,10 +254,10 @@ Player.prototype.onLevelUp = function() {
     ];
       break;
       case 10:
-      allEnemies = [];
-      gems = [];
-      messages = [new Message(0, 20, 6)];
-      obstacles = [new Obstacle(220, 320, 9), new Obstacle(120, 300, 7), new Obstacle(303, 320, 8), new Obstacle(0, 300, 7), new Obstacle(0, 400, 9), new Obstacle(101, 400, 8), new Obstacle(303, 383, 8)]
+        allEnemies = [];
+        gems = [];
+        messages = [new Message(0, 20, 6)];
+        obstacles = [new Obstacle(220, 320, 9), new Obstacle(120, 300, 7), new Obstacle(303, 320, 8), new Obstacle(0, 300, 7), new Obstacle(0, 400, 9), new Obstacle(101, 400, 8), new Obstacle(303, 383, 8)]
         break;
   }
 };
@@ -241,10 +286,25 @@ Player.prototype.checkHealth = function() {
     allEnemies.forEach(function(enemy){
       Object.freeze(enemy);
     });
-    messages = [new Message(0, 20, 7)];
+    if(this.level < 8) {
+      messages = [new Message(101, 20, 7)];
+    }else {
+      messages = [new Message(0, 20, 7)];
+    }
+
   }
 }
 
+/*
+* @description - Represents obstacles.
+* @constructor
+* @param {number} x - obstacle position on x-axis.
+* @param {number} y - obstacle position on y axis.
+* @param {string} sprite - URL of obstacle image.
+* @method: render - it is responsible for drawing the image on canvas.
+* @method: update - @param {string} key - is passed from addEventListener
+*                 - this method blocks the player from moving to where the obstacle is.
+*/
 var Obstacle = function(x, y, i) {
   this.x = x;
   this.y = y;
@@ -274,6 +334,16 @@ Obstacle.prototype.update = function(key){
 
 }
 
+/*
+* @description - Represents gems.
+* @constructor
+* @param {number} x - gem position on x-axis.
+* @param {number} y - gem position on y axis.
+* @param {string} sprite - URL of gem image.
+* @method: render - it is responsible for drawing the image on canvas.
+* @method: update - it checks if the player is on position the gem is
+*                 - it updates player health or points depending what item player picks up
+*/
 var Gems = function(x, y, i) {
   this.x = x;
   this.y = y;
@@ -304,6 +374,15 @@ Gems.prototype.update = function() {
   }
 }
 
+/*
+* @description - Represents different items (keys, treasure chest, way out image...)
+* @constructor
+* @param {number} x - item position on x-axis.
+* @param {number} y - item position on y axis.
+* @param {string} sprite - URL of item image.
+* @method: render - it is responsible for drawing the image on canvas.
+* @method: update - it checks if the player already has keys so they don't respawn
+*/
 var Item = function(x, y, i) {
   this.x = x;
   this.y = y;
@@ -328,6 +407,15 @@ Item.prototype.update = function() {
     }
   }
 }
+
+/*
+* @description - It is a 'game Over' scroll
+* @constructor
+* @param {number} x - position on x-axis.
+* @param {number} y - position on y axis.
+* @param {string} sprite - URL.
+* @method: render - it is responsible for drawing the image on canvas.
+*/
 var Message = function(x, y, i) {
   this.x = x;
   this.y = y;
@@ -336,24 +424,28 @@ var Message = function(x, y, i) {
 Message.prototype.render = function() {
   ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
+
+// Empty gems array
 var gems = []
+//Array of images for gems
 var gemsImages = [
   'images/Heart.png',
   'images/GemOrange.png',
   'images/GemBlue.png',
   'images/GemGreen.png',
 ]
+//Object call for player object
 var player = new Player(101, 383);
+//Starting enemies array
 var allEnemies = [
   new Enemy(60, 150),
   new Enemy(60, 210),
   new Enemy(140, 180),
   new Enemy(220, 150),
 ];
+//Empty obstacles array
 var obstacles = [];
+//Array of images for obstacles
 var obstacleImages = [
   'images/Rock.png',
   'images/bench.png',
@@ -366,7 +458,9 @@ var obstacleImages = [
   'images/treasure-one.png',
   'images/treasure-three.png'
 ]
+//Empty items array
 var items = [];
+//Array of images for for items
 var itemImages = [
   'images/treasure-chest.png',
   'images/cliff-hole.png',
@@ -377,10 +471,11 @@ var itemImages = [
   'images/winning-message.png',
   'images/game-over-message.png'
 ];
+//Empty messages array (was planned to have a winning screen also)
 var messages = [];
 
 // This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+// Player.handleInput() method.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
