@@ -200,7 +200,7 @@ Player.prototype.onLevelUp = function() {
     case 7:
       gems = [new Gems(101, 170, 0), new Gems(0, 252, 1), new Gems(505, 248, 2)];
       items = [new Item(404, 0, 1), new Item(202, 0, 1), new Item(508, 165, 0)];
-      allEnemies.push(new Enemy(140, 240), new Enemy(220, 300) );
+      // allEnemies.push(new Enemy(140, 240), new Enemy(220, 300) ); removed as the game is to hard
       obstacles = [
         new Obstacle(0, 55, 3), //PALM TREE
         new Obstacle(101, 55, 0), //ROCK
